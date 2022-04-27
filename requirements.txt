@@ -1,4 +1,9 @@
+asana==0.10.13
+certifi==2021.10.8
+charset-normalizer==2.0.12
+idna==3.3
 keyboard==0.13.5
+oauthlib==3.2.0
 pyobjc==8.5
 pyobjc-core==8.5
 pyobjc-framework-Accessibility==8.5
@@ -137,3 +142,7 @@ pyobjc-framework-VideoToolbox==8.5
 pyobjc-framework-Virtualization==8.5
 pyobjc-framework-Vision==8.5
 pyobjc-framework-WebKit==8.5
+requests==2.27.1
+requests-oauthlib==1.3.1
+six==1.16.0
+urllib3==1.26.9
