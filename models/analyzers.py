@@ -1,6 +1,7 @@
 import time
-
 from pynput.keyboard import Key, Listener
+from asana_api import client_tasks
+from actions import reformers
 
 
 class KeyAnalyzer:
@@ -21,32 +22,42 @@ class TaskAnalyzer:
     important_task_cost = 2
     equally_task_cost = 1
 
-    def __init__(self, tasks):
-        self._tasks = tasks
-        self._task_scores = dict.fromkeys(tasks, 0)
+    def __init__(self, api_key):
+        self._tasks = reformers.reformat_tasks(client_tasks.get_tasks(api_key))
+        self._scores = dict.fromkeys(self._tasks.keys(), 0)
 
-    def _compare_tasks(self, left_task, right_task):
-        print(f'{left_task} | {right_task}')
+    def _compare_tasks(self, gid_left, gid_right):
+        self._display_choice(gid_left, '|', gid_right)
         KeyAnalyzer.listen()
         if KeyAnalyzer.pressed_key == Key.left:
-            self._task_scores[left_task] += self.important_task_cost
-            print(f'{left_task} > {right_task}')
+            self.add_scores(gid_left, self.important_task_cost)
+            self._display_choice(gid_left, '>', gid_right)
 
         elif KeyAnalyzer.pressed_key == Key.right:
-            self._task_scores[right_task] += self.important_task_cost
-            print(f'{left_task} < {right_task}')
+            self.add_scores(gid_right, self.important_task_cost)
+            self._display_choice(gid_left, '<', gid_right)
 
         elif KeyAnalyzer.pressed_key == Key.up:
-            self._task_scores[left_task] += self.equally_task_cost
-            self._task_scores[right_task] += self.equally_task_cost
-            print(f'{left_task} = {right_task}')
+            self.add_scores(gid_left, self.equally_task_cost)
+            self.add_scores(gid_right, self.equally_task_cost)
+            self._display_choice(gid_left, '=', gid_right)
 
         time.sleep(.3)
 
     def start_analysis(self):
-        for i, left_task in enumerate(self._tasks):
-            for right_task in self._tasks[i + 1:]:
-                self._compare_tasks(left_task, right_task)
+        for i, left_task_gid in enumerate(self._tasks.keys()):
+            for right_task_gid in list(self._tasks.keys())[i + 1:]:
+                self._compare_tasks(left_task_gid, right_task_gid)
+
+    def add_scores(self, task_gid, number):
+        self._scores[task_gid] += number
+
+    def _display_choice(self, gid_left, option, gid_right):
+        print(f'{self.get_task_name(gid_left)} {option} {self.get_task_name(gid_right)}')
+
+    def get_task_name(self, gid):
+        return self._tasks[gid]['name']
 
     def get_sorted_tasks(self):
-        return sorted(self._task_scores.items(), key=lambda x: x[1], reverse=True)
+        gid_sorted = sorted(self._scores.items(), key=lambda x: x[1], reverse=True)
+        return [(self.get_task_name(gid), priority) for gid, priority in gid_sorted]
