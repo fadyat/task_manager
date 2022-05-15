@@ -1,4 +1,5 @@
 from asana import Client
+
 import config
 
 
@@ -11,8 +12,8 @@ def select_option(message, options):
     return options_lst[index]
 
 
-def get_tasks():
-    client = Client.access_token(config.api_key)
+def get_tasks(api_key):
+    client = Client.access_token(api_key)
     workspaces = client.workspaces.find_all()
     workspace = select_option('Please choice a workspace:', workspaces)
     projects = client.projects.find_all({'workspace': workspace['gid']})
@@ -22,7 +23,7 @@ def get_tasks():
 
 
 def main():
-    tasks = get_tasks()
+    tasks = get_tasks(config.api_key)
     print([t for t in tasks])
 
 
