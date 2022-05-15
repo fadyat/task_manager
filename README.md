@@ -12,7 +12,9 @@
 
 - [v1](https://github.com/fadyat/task_manager/pull/1)
 
-  ```sudo python main.py file_with_tasks.txt```
+  ```python3 main.py tmp.txt```
+
+  or add `tmp.txt` as a parameter in IDE
 - [v2](https://github.com/fadyat/task_manager/pull/2)
 
   ```config.py``` with your generated asana api_key
